@@ -1,0 +1,43 @@
+---
+title: "a3_task4_mukta_kelkar"
+author: "Mukta Kelkar"
+date: "10/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(lubridate)
+```
+
+## Read in and wrangle data
+
+```{r}
+purple_naples <- read.csv(here("data", "urchins.csv")) %>% 
+  clean_names() %>% 
+  filter(site == "NAPL", common_name == "Purple Urchin") %>% 
+  mutate(mdy(date)) %>% 
+  rename(date_format = "mdy(date)") %>% 
+  mutate(year = year(date_format)) %>% 
+  mutate(month = month(date_format)) %>% 
+  filter(year == 2008) %>% 
+  filter(month == 10)
+  
+```
+
+## Visualize the data
+
+```{r}
+purple_naples %>% 
+  ggplot(aes(x = size)) +
+  geom_histogram(bins = 15) +
+  facet_wrap(~treatment)
+
+purple_naples %>% 
+  qqplot(purple_naples$treatment == "CONTROL",
+         purple_naples$treatment == "ANNUAL")
+```
+
